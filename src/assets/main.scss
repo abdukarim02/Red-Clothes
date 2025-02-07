@@ -34,6 +34,9 @@ $dark-gray: #7d7d7d;
     align-items: $ai;
     justify-content: $jc;
 }
+body {
+    position: relative;
+}
 .container {
     max-width: 1240px;
     width: 100%;
@@ -241,6 +244,8 @@ $dark-gray: #7d7d7d;
         @include stylefontz(  $font-family, 300, 16px,   $gray);
     }
 }
+
+
 @media (max-width: 1024px) {
     .main {
         &__content-swiper {

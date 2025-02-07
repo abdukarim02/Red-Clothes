@@ -20,7 +20,7 @@
                 <ProductsList 
                     v-for="product in filteredProducts" 
                     :key="product.id"
-                    :imag="product.imag"
+                    :image="product.imag"
                     :favourite="product.favourite"
                     :title="product.title"
                     :text="product.text"
