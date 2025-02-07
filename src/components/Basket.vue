@@ -1,5 +1,4 @@
 <template>
-    <!-- Модальное окно корзины -->
     <section v-show="isCartOpen" class="cart-modal" @click.self="$emit('close-cart')">
       <div class="cart-content">
         <div class="cart-top">
@@ -14,7 +13,7 @@
         
         <div class="cart-body" v-if="cart.length > 0">
           <div v-for="item in cart" :key="item.id" class="cart-item">
-            <img :src="item.imag" :alt="item.title"  class="cart-item-img">
+            <img :src="item.imag" :alt="item.title" class="cart-item-img">
             <div class="cart-item-info">
               <span class="product__info-name">{{ item.title }} ({{ item.quantity }})</span>
               <span class="product__info-text">{{ item.text }}</span>
@@ -22,35 +21,59 @@
             </div>
             <button @click="removeFromCart(item.id)" class="product__footer-btn">X</button>
           </div>
-            
         </div>
-        <p v-else>Корзина пуста</p>
+        <div v-else> Корзина пуста</div>
+        
         <div class="cart-footer">
-                <p class="product__info-title title"> К оплате:  <span>{{ totalPrice }} ₽</span></p>
-                <button class="cart-footer-btn">Заказать</button>
+          <p class="product__info-title title">К оплате: <span>{{ totalPrice }} ₽</span></p>
+          <button class="cart-footer-btn" @click="submitOrder">Заказать</button>
         </div>
       </div>
     </section>
 </template>
-  
+
 <script>
-  export default {
-    props: {
-      isCartOpen: Boolean, // Показывать корзину
-      cart: Array // Список товаров в корзине
+export default {
+  props: {
+    isCartOpen: Boolean, // Показывать корзину
+    cart: Array // Список товаров в корзине
+  },
+  computed: {
+    totalPrice() {
+      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    }
+  },
+  methods: {
+    removeFromCart(id) {
+      this.$emit('remove-from-cart', id);
     },
-    computed: {
-      totalPrice() {
-        return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    async submitOrder() {
+      if (this.cart.length === 0) {
+        alert("Ваша корзина пуста!");
+        return;
       }
-    },
-    methods: {
-      removeFromCart(id) {
-        this.$emit('remove-from-cart', id); // Отправка события родителю
+
+      try {
+        const response = await fetch("https://example.com/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items: this.cart, total: this.totalPrice })
+        });
+
+        if (!response.ok) throw new Error("Ошибка при оформлении заказа");
+
+        alert("Заказ успешно отправлен!");
+        this.$emit('clear-cart'); // Очистить корзину после успешного заказа
+        this.$emit('close-cart'); // Закрыть корзину
+      } catch (error) {
+        console.error("Ошибка при заказе:", error);
+        alert("Ошибка при оформлении заказа. Попробуйте снова.");
       }
     }
-  };
+  }
+};
 </script>
+
 <style>
 .cart-modal {
     width: 100%;
