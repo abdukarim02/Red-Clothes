@@ -1,0 +1,262 @@
+*{padding: 0;margin: 0;border: 0;}
+*,*:before,*:after{-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;}
+:focus,:active{outline: none;}
+a:focus,a:active{outline: none;}
+nav,footer,header,aside{display: block;}
+html,body{height:100%;width:100%;font-size:100%;line-height:1;font-size:14px;-ms-text-size-adjust:100%;-moz-text-size-adjust:100%;-webkit-text-size-adjust:100%;}
+input,button,textarea{font-family:inherit;}
+input::-ms-clear{display: none;}
+button{cursor: pointer;}
+button::-moz-focus-inner{padding:0;border:0;}
+a,a:visited{text-decoration: none;}
+a:hover{text-decoration: none;}
+ul li{list-style: none;}
+img{vertical-align: top;}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight: inherit;}
+/*--------------------*/
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+$font-family: "Roboto", sans-serif;
+$second-family: "Open Sans", sans-serif;
+$third-family: "Inter", sans-serif;
+$bordo: #750000;
+$gray: #d9d9d9;
+$dark-gray: #7d7d7d;
+@mixin stylefontz($ff, $fw, $fs, $c){
+    font-family: $ff;
+    font-weight: $fw;
+    font-size: $fs;
+    color: $c;
+}
+@mixin stylcenter($d, $ai, $jc){
+    display: $d;
+    align-items: $ai;
+    justify-content: $jc;
+}
+.container {
+    max-width: 1240px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.title {
+    @include stylefontz($font-family, 700, 36px, $bordo);
+}
+.header {
+    &__content {
+        border-bottom: 2px solid $bordo;
+        padding: 15px 20px;
+        @include stylcenter(flex, center, space-between);
+    }
+    &__content-social {
+        width: 243px;
+        @include stylcenter(flex, center, space-between);
+    }
+    &__social-logo {
+        @include stylcenter(flex, center, space-between);
+        gap: 10px;
+        span {
+            @include stylefontz($font-family, 500, 24px,  $bordo);
+        }
+    }
+    &__logo-img {
+        cursor: pointer;
+    }
+}
+.main {
+    margin: 50px 0;
+    &__content-swiper {
+        .swiper-slide {
+            border-radius: 50px;
+            border: 4px solid $bordo;
+            @include stylcenter(flex, center, space-between);
+            background: linear-gradient(90deg, #fff 0%, #fff 12.36%, #d9d9d9 33.12%, #750000 33.13%, #750000 100%);
+        }
+    }
+    &__swiper-body {
+        position: relative;
+        width: 100%;
+        @include stylcenter(flex, center, center);
+    }
+    &__body-info {
+        width: 445px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%)
+    }
+    &__info-title {
+        @include stylcenter(flex, center, space-between);
+        @include stylefontz($font-family, 400, 54px,  $bordo);
+        span {
+            color: $gray;
+        }
+    }
+    &__info-btn {
+        display: block;
+        width: 100%;
+        text-align: end;
+        margin-top: 10px;
+        @include stylefontz($second-family, 400, 16px,  $background);
+    }
+    &__swiper-bg {
+        width: 400px;
+        height: 600px;
+    }
+    &__bg-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius:0 50px 50px 0;
+    }
+}
+.product {
+    &__content-info {
+        @include stylcenter(flex, center, space-between);
+        margin-bottom: 40px;
+    }
+    &__info-form {
+        width: 440px;
+        height: 49px;
+        border: 1px solid $gray;
+        border-radius: 12px;
+        @include stylcenter(flex, center, space-between);
+        gap: 10px;
+        background: linear-gradient(180deg, #fff 0%, #d9d9d9 100%);
+    }
+    &__form-input {
+        background: transparent;
+        width: 90%;
+        @include stylefontz( $font-family, 400, 24px,  $bordo);
+        &::placeholder {
+            @include stylefontz( $font-family, 400, 24px,  $gray);
+        }
+    }
+    &__form-btn {
+        width: 10%;
+        background: transparent;
+    }
+    &__content-wrap {
+        @include stylcenter(flex, center, space-between);
+        flex-wrap: wrap;
+        gap: 50px;
+    }
+	&__wrap-flex {
+        flex: 0 1 30%;
+        border: 1px solid $gray;
+        border-radius: 30px;
+        transition: all 0.3s ease-in;
+        cursor: pointer;
+        &:hover {
+            box-shadow: 4px 4px 10px 0 $bordo;
+        }
+	}
+	&__flex-bg {
+        position: relative;
+        border-radius: 30px 30px 20px 20px;
+        width: 100%;
+        height: 400px;
+	}
+	&__bg-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        border-radius: 30px 30px 20px 20px;
+        top: 0;
+        left: 0;
+	}
+	&__bg-favourite {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        cursor: pointer;
+	}
+	&__flex-info {
+        width: 295px;
+        margin: 20px;
+	}
+	&__info-name {
+        @include stylefontz( $font-family, 700, 24px,  $bordo);
+	}
+	&__info-text {
+        @include stylefontz( $second-family, 400, 24px,  $dark-bordo);
+        margin: 5px 0 20px;
+	}
+	&__info-footer {
+        @include stylcenter(flex, center, space-between);
+	}
+	&__price-name {
+        @include stylefontz( $second-family, 400, 24px,   $dark-gray);
+        margin-bottom: 5px;
+	}
+	&__price-info {
+        @include stylefontz( $second-family, 400, 36px,   #000);
+	}
+	&__footer-btn {
+        border: 2px solid $gray;
+        border-radius: 20px;
+        padding: 9px 25px;
+        @include stylefontz( $second-family, 400, 54px,  $gray);
+	}
+}
+.footer {
+    margin-top: 50px;
+    padding: 50px 0 20px;
+    background: $bordo;
+    &__content-wrap {
+        @include stylcenter(flex, center, space-between);
+        margin-bottom: 30px;
+    }
+    &__flex-name {
+        @include stylefontz( $font-family, 700, 24px,   $gray);
+    }
+    &__flex-menu {
+        margin-top: 20px;
+        @include stylcenter(flex, start, space-between);
+        flex-direction: column;
+        gap: 10px;
+    }
+    &__list-link {
+        @include stylefontz( $second-family, 400, 24px,   $gray);
+    }
+    &__flex-socail {
+        margin-top: 20px;
+    }
+    &__socail-body {
+        margin-top: 20px;
+        @include stylcenter(flex, start, space-between);
+        gap: 20px;
+    }
+    &__body-link {
+        transform: scale(1);
+        transition: all 0.3s ease-in;
+        &:hover {
+            transform: scale(1.25);
+        }
+    }
+    &__text-item {
+        text-align: center;
+        @include stylefontz(  $font-family, 300, 16px,   $gray);
+    }
+}
+@media (max-width: 1024px) {
+    .main {
+        &__content-swiper {
+            .swiper-slide {
+                background: $bordo;
+            }
+        }
+        &__body-info {
+            position: relative;
+            top: unset;
+            left: unset;
+            transform: unset;
+        }
+        &__info-title {
+            color: $gray;
+        }
+    }
+     
+}
