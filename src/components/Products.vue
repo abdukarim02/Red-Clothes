@@ -33,18 +33,18 @@
     </section>
 </template>
 <script>
-import ProductsList from './ProductsList.vue';
-import Basket from './Basket.vue';
+import ProductsList from './ProductsList.vue'; // Импорт компонента списка продуктов
+import Basket from './Basket.vue'; // Импорт компонента корзины
 
 export default {
     components: {
-        ProductsList,
-        Basket
+        ProductsList, // Регистрация компонента списка продуктов
+        Basket // Регистрация компонента корзины
     },
     data() {
         return {
-            searchQuery: "",
-            products: [
+            searchQuery: "", // Строка для поиска товаров
+            products: [ // Список товаров с изображением, названием, описанием и ценой
                 { id: 1, image: "/src/img/products-1.png", favourite: "/src/img/favourite-products-1.png", title: "Blacksi", text: "Костюм спортивный", price: 3595 },
                 { id: 2, image: "/src/img/products-2.png", favourite: "/src/img/favourite-products-1.png", title: "Fashion.Love.Story", text: "Платье", price: 3500 },
                 { id: 3, image: "/src/img/products-3.png", favourite: "/src/img/favourite-products-1.png", title: "UNIQLO", text: "Водолазка", price: 2999 },
@@ -52,11 +52,11 @@ export default {
                 { id: 5, image: "/src/img/products-5.png", favourite: "/src/img/favourite-products-1.png", title: "Vittoria Vicci", text: "Пуловер", price: 3595 },
                 { id: 6, image: "/src/img/products-6.png", favourite: "/src/img/favourite-products-1.png", title: "O'stin", text: "Платье", price: 3799 }
             ],
-            cart: []
+            cart: [] // Массив товаров, добавленных в корзину
         };
     },
     computed: {
-        filteredProducts() {
+        filteredProducts() { // Фильтрация товаров по поисковому запросу
             if (!this.searchQuery) {
                 return this.products;
             }
@@ -68,33 +68,26 @@ export default {
         }
     },
     methods: {
-        searchProducts() {
+        searchProducts() { // Метод поиска товаров (в текущем виде только логирует запрос)
             console.log("Поиск: ", this.searchQuery);
         },
-        addToCart(product) {
-            const existingProduct = this.cart.find(item => item.id === product.id);
-            if (existingProduct) {
-                existingProduct.quantity++;
-            } else {
-                this.cart.push({ ...product, quantity: 1 });
-            }
-        },
-        removeFromCart(productId) {
+        removeFromCart(productId) { // Удаление товара из корзины
             const productIndex = this.cart.findIndex(item => item.id === productId);
             if (productIndex !== -1) {
                 if (this.cart[productIndex].quantity > 1) {
-                    this.cart[productIndex].quantity--;
+                    this.cart[productIndex].quantity--; // Уменьшение количества товара
                 } else {
-                    this.cart.splice(productIndex, 1);
+                    this.cart.splice(productIndex, 1); // Удаление товара из корзины, если его количество 1
                 }
             }
         },
-        updateCart(updatedCart) {
+        updateCart(updatedCart) { // Обновление состояния корзины (например, после изменения количества в компоненте Basket)
             this.cart = updatedCart;
         }
     }
 };
 </script>
+
 
 
 

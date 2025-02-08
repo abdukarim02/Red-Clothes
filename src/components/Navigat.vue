@@ -26,11 +26,13 @@
 <script>
 import Basket from './Basket.vue';
 import ProductsList from './ProductsList.vue';
+import Products from './Products.vue';
 
 export default {
   components: {
     Basket,
-    ProductsList
+    ProductsList,
+    Products
   },
   data() {
     return {
@@ -46,15 +48,6 @@ export default {
   methods: {
     toggleCart() {
       this.isCartOpen = !this.isCartOpen;
-    },
-    addToCart(product) {
-      const existingProduct = this.cart.find(item => item.id === product.id);
-      if (existingProduct) {
-        existingProduct.quantity++;
-      } else {
-        this.cart.push({ ...product, quantity: 1 });
-      }
-      this.isCartOpen = true;
     },
     updateCart(updatedCart) {  // Добавляем обработчик события update-cart
       this.cart = updatedCart;

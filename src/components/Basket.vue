@@ -86,23 +86,10 @@ export default {
         this.$emit('update-cart', [...this.localCart]); // Передаём обновлённый список корзины родителю
       }
     },
-
-    addToCart(product) {
-      // Добавление товара в корзину
-      const existingProduct = this.cart.find(item => item.id === product.id);
-      if (existingProduct) {
-        existingProduct.quantity++; // Увеличиваем количество, если товар уже есть в корзине
-      } else {
-        this.cart.push({ ...product, quantity: 1 }); // Добавляем новый товар с количеством 1
-      }
-      console.log(product)
-    },
-
     submitOrder() {
       // Открываем форму доставки
       this.showShipping = true;
     },
-
     resetCart() {
       // Полностью очищаем корзину
       this.localCart = [];
