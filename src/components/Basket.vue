@@ -13,7 +13,7 @@
       
       <div class="cart-body" v-if="cart.length > 0 && !showShipping">
         <div v-for="item in cart" :key="item.id" class="cart-item">
-          <img :src="item.imag" :alt="item.title" class="cart-item-img">
+          <img :src="item.image" :alt="item.title" class="cart-item-img">
           <div class="cart-item-info">
             <span class="product__info-name">{{ item.title }} ({{ item.quantity }})</span>
             <span class="product__info-text">{{ item.text }}</span>
@@ -22,22 +22,25 @@
           <button @click="removeFromCart(item.id)" class="product__footer-btn">X</button>
         </div>
       </div>
+
       <div class="cart-sapling" v-if="cart.length === 0 && !showShipping">
         <div class="cart-sapling-info">
           <h5 class="cart-sapling-name">Ваша корзина пуста</h5>
           <img src="/src/img/cart-sapling-1.png" alt="" class="cart-sapling-img">
           <p class="cart-sapling-text">Добавьте хотя бы один товар, чтобы сделать заказ</p>
-          <button class="cart-sapling-btn" @click="$emit('close-cart')">Вернуться</button>
+          <button class="cart-sapling-btn" @click="resetCart">Вернуться</button>
         </div>
       </div>
+
       <div class="cart-shipping" v-if="showShipping">
         <div class="cart-sapling-info">
           <h5 class="cart-sapling-name">Заказ оформлен!</h5>
           <img src="/src/img/cart-sapling-2.png" alt="" class="cart-sapling-img">
           <p class="cart-sapling-text">Спасибо за ваш заказ!</p>
-          <button class="cart-sapling-btn" @click="$emit('close-cart')">Ок</button>
+          <button class="cart-sapling-btn" @click="closeShipping">Ок</button>
         </div>
       </div>
+
       <div class="cart-footer" v-if="cart.length > 0 && !showShipping">
         <p class="product__info-title title">К оплате: <span>{{ totalPrice }} ₽</span></p>
         <button class="cart-footer-btn" @click="submitOrder">Заказать</button>
@@ -48,36 +51,63 @@
 
 <script>
 export default {
-props: {
-  isCartOpen: Boolean,
-  cart: Array
-},
-data() {
-  return {
-    showShipping: false
-  };
-},
-computed: {
-  totalPrice() {
-    return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }
-},
-methods: {
-  removeFromCart(id) {
-    const index = this.cart.findIndex(item => item.id === id);
-    if (index !== -1) {
-      this.cart.splice(index, 1);
-      this.$emit('update-cart', this.cart);
+  props: {
+    isCartOpen: Boolean,
+    cart: Array
+  },
+  data() {
+    return {
+      showShipping: false,
+      localCart: [...this.cart] // Создаём локальную копию корзины
+    };
+  },
+  computed: {
+    totalPrice() {
+      return this.localCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     }
   },
-  submitOrder() {
-    this.showShipping = true;
+  watch: {
+    cart: {
+      handler(newCart) {
+        this.localCart = [...newCart]; // Обновляем локальную копию при изменении пропса
+      },
+      deep: true
+    }
+  },
+  methods: {
+    removeFromCart(id) {
+      const index = this.localCart.findIndex(item => item.id === id);
+      if (index !== -1) {
+        this.localCart[index].quantity -= 1;
+        if (this.localCart[index].quantity <= 0) {
+          this.localCart.splice(index, 1);
+        }
+        this.$emit('update-cart', [...this.localCart]); // Отправляем обновлённый массив в родительский компонент
+      }
+    },
+    addToCart(product) {
+        const existingProduct = this.cart.find(item => item.id === product.id);
+        if (existingProduct) {
+            existingProduct.quantity++;
+        } else {
+            this.cart.push({ ...product, quantity: 1 });
+        }
+    },
+    submitOrder() {
+      this.showShipping = true;
+    },
+    resetCart() {
+      this.localCart = []; // Очищаем локальную корзину
+      this.$emit('update-cart', []);
+      this.$emit('close-cart');
+    },
+    closeShipping() {
+      this.showShipping = false;
+      this.$emit('close-cart');
+    }
   }
-}
 };
-</script>>
-
-
+</script>
 <style>
 .cart-modal {
     width: 100%;
@@ -198,5 +228,3 @@ methods: {
   border: 4px solid #750000;
 }
 </style>
-
-  

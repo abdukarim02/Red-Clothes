@@ -20,23 +20,22 @@
   </header>
 
   <!-- Компонент корзины -->
-  <Basket :isCartOpen="isCartOpen" @close-cart="toggleCart" :cart="cart"/>
+  <Basket :isCartOpen="isCartOpen" :cart="cart" @update-cart="updateCart" @close-cart="toggleCart" />
 </template>
 
 <script>
 import Basket from './Basket.vue';
+import ProductsList from './ProductsList.vue';
 
 export default {
   components: {
-    Basket
+    Basket,
+    ProductsList
   },
   data() {
     return {
       isCartOpen: false,
-      cart: [
-        { id: 1, imag: "/src/img/products-1.png", title: "Blacksi", quantity: 1, price: 3595 },
-        { id: 2, imag: "/src/img/products-2.png", title: "Nike Air", quantity: 2, price: 7999 }
-      ]
+      cart: []
     };
   },
   computed: {
@@ -47,7 +46,21 @@ export default {
   methods: {
     toggleCart() {
       this.isCartOpen = !this.isCartOpen;
+    },
+    addToCart(product) {
+      const existingProduct = this.cart.find(item => item.id === product.id);
+      if (existingProduct) {
+        existingProduct.quantity++;
+      } else {
+        this.cart.push({ ...product, quantity: 1 });
+      }
+      this.isCartOpen = true;
+    },
+    updateCart(updatedCart) {  // Добавляем обработчик события update-cart
+      this.cart = updatedCart;
     }
   }
 };
 </script>
+
+
