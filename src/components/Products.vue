@@ -20,19 +20,18 @@
                 <ProductsList 
                     v-for="product in filteredProducts" 
                     :key="product.id"
-                    :image="product.imag"
+                    :image="product.image"
                     :favourite="product.favourite"
                     :title="product.title"
                     :text="product.text"
                     :price="product.price"
-                    @add-to-cart="addToCart"
+                    @add-to-cart="addToCart(product)"
                 />
             </div>
-            <Basket :cart="cart" @remove-from-cart="addToCart" />
+            <Basket :cart="cart" @update-cart="updateCart" />
         </div>
     </section>
 </template>
-
 <script>
 import ProductsList from './ProductsList.vue';
 import Basket from './Basket.vue';
@@ -46,12 +45,12 @@ export default {
         return {
             searchQuery: "",
             products: [
-                { id: 1, imag: "/src/img/products-1.png", favourite: "/src/img/favourite-products-1.png", title: "Blacksi", text: "Костюм спортивный", price: 3595 },
-                { id: 2, imag: "/src/img/products-2.png", favourite: "/src/img/favourite-products-1.png", title: "Fashion.Love.Story", text: "Платье", price: 3500 },
-                { id: 3, imag: "/src/img/products-3.png", favourite: "/src/img/favourite-products-1.png", title: "UNIQLO", text: "Водолазка", price: 2999 },
-                { id: 4, imag: "/src/img/products-4.png", favourite: "/src/img/favourite-products-1.png", title: "Mark Formelle", text: "Костюм домашний", price: 1699 },
-                { id: 5, imag: "/src/img/products-5.png", favourite: "/src/img/favourite-products-1.png", title: "Vittoria Vicci", text: "Пуловер", price: 3595 },
-                { id: 6, imag: "/src/img/products-6.png", favourite: "/src/img/favourite-products-1.png", title: "O'stin", text: "Платье", price: 3799 }
+                { id: 1, image: "/src/img/products-1.png", favourite: "/src/img/favourite-products-1.png", title: "Blacksi", text: "Костюм спортивный", price: 3595 },
+                { id: 2, image: "/src/img/products-2.png", favourite: "/src/img/favourite-products-1.png", title: "Fashion.Love.Story", text: "Платье", price: 3500 },
+                { id: 3, image: "/src/img/products-3.png", favourite: "/src/img/favourite-products-1.png", title: "UNIQLO", text: "Водолазка", price: 2999 },
+                { id: 4, image: "/src/img/products-4.png", favourite: "/src/img/favourite-products-1.png", title: "Mark Formelle", text: "Костюм домашний", price: 1699 },
+                { id: 5, image: "/src/img/products-5.png", favourite: "/src/img/favourite-products-1.png", title: "Vittoria Vicci", text: "Пуловер", price: 3595 },
+                { id: 6, image: "/src/img/products-6.png", favourite: "/src/img/favourite-products-1.png", title: "O'stin", text: "Платье", price: 3799 }
             ],
             cart: []
         };
@@ -81,11 +80,22 @@ export default {
             }
         },
         removeFromCart(productId) {
-            this.cart = this.cart.filter(item => item.id !== productId);
+            const productIndex = this.cart.findIndex(item => item.id === productId);
+            if (productIndex !== -1) {
+                if (this.cart[productIndex].quantity > 1) {
+                    this.cart[productIndex].quantity--;
+                } else {
+                    this.cart.splice(productIndex, 1);
+                }
+            }
+        },
+        updateCart(updatedCart) {
+            this.cart = updatedCart;
         }
     }
 };
 </script>
+
 
 
 

@@ -48,66 +48,77 @@
     </div>
   </section>
 </template>
-
 <script>
 export default {
   props: {
-    isCartOpen: Boolean,
-    cart: Array
+    isCartOpen: Boolean, // Флаг, указывающий, открыта ли корзина
+    cart: Array // Переданный пропс с массивом товаров в корзине
   },
   data() {
     return {
-      showShipping: false,
-      localCart: [...this.cart] // Создаём локальную копию корзины
+      showShipping: false, // Флаг для отображения формы доставки
+      localCart: [...this.cart] // Создаём локальную копию корзины, чтобы изменять её без непосредственного изменения пропсов
     };
   },
   computed: {
     totalPrice() {
+      // Вычисляем общую сумму товаров в корзине
       return this.localCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     }
   },
   watch: {
     cart: {
       handler(newCart) {
-        this.localCart = [...newCart]; // Обновляем локальную копию при изменении пропса
+        this.localCart = [...newCart]; // Обновляем локальную копию корзины при изменении пропса cart
       },
-      deep: true
+      deep: true // Глубокое слежение за изменениями внутри массива
     }
   },
   methods: {
     removeFromCart(id) {
+      // Удаляем или уменьшаем количество товара в корзине
       const index = this.localCart.findIndex(item => item.id === id);
       if (index !== -1) {
         this.localCart[index].quantity -= 1;
         if (this.localCart[index].quantity <= 0) {
-          this.localCart.splice(index, 1);
+          this.localCart.splice(index, 1); // Удаляем товар, если количество стало 0
         }
-        this.$emit('update-cart', [...this.localCart]); // Отправляем обновлённый массив в родительский компонент
+        this.$emit('update-cart', [...this.localCart]); // Передаём обновлённый список корзины родителю
       }
     },
+
     addToCart(product) {
-        const existingProduct = this.cart.find(item => item.id === product.id);
-        if (existingProduct) {
-            existingProduct.quantity++;
-        } else {
-            this.cart.push({ ...product, quantity: 1 });
-        }
+      // Добавление товара в корзину
+      const existingProduct = this.cart.find(item => item.id === product.id);
+      if (existingProduct) {
+        existingProduct.quantity++; // Увеличиваем количество, если товар уже есть в корзине
+      } else {
+        this.cart.push({ ...product, quantity: 1 }); // Добавляем новый товар с количеством 1
+      }
+      console.log(product)
     },
+
     submitOrder() {
+      // Открываем форму доставки
       this.showShipping = true;
     },
+
     resetCart() {
-      this.localCart = []; // Очищаем локальную корзину
-      this.$emit('update-cart', []);
-      this.$emit('close-cart');
+      // Полностью очищаем корзину
+      this.localCart = [];
+      this.$emit('update-cart', [...this.localCart]); // Передаём обновлённую корзину родителю
+      this.$emit('close-cart'); // Закрываем корзину
     },
+
     closeShipping() {
+      // Закрываем форму доставки и корзину
       this.showShipping = false;
       this.$emit('close-cart');
     }
   }
 };
 </script>
+
 <style>
 .cart-modal {
     width: 100%;

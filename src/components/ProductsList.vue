@@ -32,7 +32,7 @@ const props = defineProps({
 });
 
 // Определяем событие для передачи в родительский компонент
-const emit = defineEmits(['add-to-cart']);
+const emit = defineEmits(['cart-modal']);
 
 // Управление состоянием корзины
 const toggleCart = ref(false);
@@ -40,7 +40,7 @@ const toggleCart = ref(false);
 // Метод для добавления товара в корзину
 const addToCart = () => {
     toggleCart.value = true; // Открываем корзину
-    emit('add-to-cart', {
+    emit('cart-modal', {
         title: props.title,
         price: props.price,
         image: props.image,
