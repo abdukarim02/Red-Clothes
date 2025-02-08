@@ -1,5 +1,5 @@
 <template>
-    <div class="product__wrap-flex">
+    <div class="product__wrap-flex" :data-id="id">
         <div class="product__flex-bg">
             <img :src="image" alt="product-bg" class="product__bg-img">
             <img :src="favourite" alt="favourite" class="product__bg-favourite">
@@ -20,10 +20,11 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 
 // Принимаем данные о товаре
 const props = defineProps({
+    id: Number, // ID товара
     image: String,
     favourite: String,
     title: String,
@@ -32,21 +33,27 @@ const props = defineProps({
 });
 
 // Определяем событие для передачи в родительский компонент
-const emit = defineEmits(['cart-modal']);
-
-// Управление состоянием корзины
-const toggleCart = ref(false);
+const emit = defineEmits(['add-to-cart']);
 
 // Метод для добавления товара в корзину
 const addToCart = () => {
-    toggleCart.value = true; // Открываем корзину
-    emit('cart-modal', {
+    if (!props.id || !props.title || !props.text || !props.price || !props.image) {
+        console.warn('Некорректные данные товара:', props);
+        return;
+    }
+
+    emit('add-to-cart', {
+        id: props.id,
         title: props.title,
+        text: props.text,
         price: props.price,
         image: props.image,
-        quantity: 1,
-        toggleCart: toggleCart.value
+        quantity: 1
     });
-    console.log(toggleCart.value)
+
+    console.log(`Товар добавлен в корзину: ${props.title} ${props.text} (ID: ${props.id} ) ${props.price}`);
 };
+
 </script>
+
+

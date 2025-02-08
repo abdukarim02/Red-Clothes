@@ -2,15 +2,15 @@
   <section v-show="isCartOpen" class="cart-modal" @click.self="$emit('close-cart')">
     <div class="cart-content">
       <div class="cart-top">
-          <button @click="$emit('close-cart')" class="close-btn">
-              <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="2" y="2" width="52" height="52" rx="26" stroke="#750000" stroke-width="4" />
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M21.6087 39.4014C20.8347 40.1895 19.5685 40.2009 18.7804 39.4269L8.59858 29.4269C8.21569 29.0508 8 28.5367 8 28C8 27.4633 8.21569 26.9492 8.59858 26.5731L18.7804 16.5731C19.5685 15.7991 20.8347 15.8105 21.6087 16.5986C22.3827 17.3866 22.3713 18.6529 21.5832 19.4269L14.8906 26L46 26C47.1046 26 48 26.8954 48 28C48 29.1046 47.1046 30 46 30L14.8906 30L21.5832 36.5731C22.3713 37.3471 22.3827 38.6134 21.6087 39.4014Z" fill="#750000" />
-              </svg>
-          </button>
-          <h2 class="title">Корзина</h2>
+        <button @click="$emit('close-cart')" class="close-btn">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+            <rect x="2" y="2" width="52" height="52" rx="26" stroke="#750000" stroke-width="4" />
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M21.6 39.4c-.8.8-2.1.8-2.8 0L8.6 29.4a2 2 0 010-2.8L18.8 16.6c.8-.8 2.1-.8 2.8 0s.8 2.1 0 2.8L14.9 26H46a2 2 0 010 4H14.9l6.7 6.6c.8.8.8 2.1 0 2.8z" fill="#750000"/>
+          </svg>
+        </button>
+        <h2 class="title">Корзина</h2>
       </div>
-      
+
       <div class="cart-body" v-if="cart.length > 0 && !showShipping">
         <div v-for="item in cart" :key="item.id" class="cart-item">
           <img :src="item.image" :alt="item.title" class="cart-item-img">
@@ -26,16 +26,16 @@
       <div class="cart-sapling" v-if="cart.length === 0 && !showShipping">
         <div class="cart-sapling-info">
           <h5 class="cart-sapling-name">Ваша корзина пуста</h5>
-          <img src="/src/img/cart-sapling-1.png" alt="" class="cart-sapling-img">
+          <img src="@/img/cart-sapling-1.png" alt="" class="cart-sapling-img">
           <p class="cart-sapling-text">Добавьте хотя бы один товар, чтобы сделать заказ</p>
-          <button class="cart-sapling-btn" @click="resetCart">Вернуться</button>
+          <button class="cart-sapling-btn" @click="$emit('close-cart')">Вернуться</button>
         </div>
       </div>
 
       <div class="cart-shipping" v-if="showShipping">
         <div class="cart-sapling-info">
           <h5 class="cart-sapling-name">Заказ оформлен!</h5>
-          <img src="/src/img/cart-sapling-2.png" alt="" class="cart-sapling-img">
+          <img src="@/img/cart-sapling-2.png" alt="" class="cart-sapling-img">
           <p class="cart-sapling-text">Спасибо за ваш заказ!</p>
           <button class="cart-sapling-btn" @click="closeShipping">Ок</button>
         </div>
@@ -48,82 +48,65 @@
     </div>
   </section>
 </template>
+
 <script>
 export default {
   props: {
-    isCartOpen: Boolean, // Флаг, указывающий, открыта ли корзина
-    cart: Array // Переданный пропс с массивом товаров в корзине
+    isCartOpen: Boolean,
+    cart: Array
   },
   data() {
     return {
-      showShipping: false, // Флаг для отображения формы доставки
-      localCart: [...this.cart] // Создаём локальную копию корзины, чтобы изменять её без непосредственного изменения пропсов
+      showShipping: false
     };
   },
   computed: {
     totalPrice() {
-      // Вычисляем общую сумму товаров в корзине
-      return this.localCart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    }
-  },
-  watch: {
-    cart: {
-      handler(newCart) {
-        this.localCart = [...newCart]; // Обновляем локальную копию корзины при изменении пропса cart
-      },
-      deep: true // Глубокое слежение за изменениями внутри массива
+      return this.cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
     }
   },
   methods: {
     removeFromCart(id) {
-      // Удаляем или уменьшаем количество товара в корзине
-      const index = this.localCart.findIndex(item => item.id === id);
-      if (index !== -1) {
-        this.localCart[index].quantity -= 1;
-        if (this.localCart[index].quantity <= 0) {
-          this.localCart.splice(index, 1); // Удаляем товар, если количество стало 0
-        }
-        this.$emit('update-cart', [...this.localCart]); // Передаём обновлённый список корзины родителю
-      }
+      const updatedCart = this.cart.map(item => 
+        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+      ).filter(item => item.quantity > 0);
+
+      this.$emit('update-cart', updatedCart);
     },
     submitOrder() {
-      // Открываем форму доставки
+      this.$emit('submit-order', this.cart); // Отправляем заказ в UserPage
       this.showShipping = true;
+      setTimeout(() => {
+        this.closeShipping();
+      }, 3000);
     },
-    resetCart() {
-      // Полностью очищаем корзину
-      this.localCart = [];
-      this.$emit('update-cart', [...this.localCart]); // Передаём обновлённую корзину родителю
-      this.$emit('close-cart'); // Закрываем корзину
-    },
-
     closeShipping() {
-      // Закрываем форму доставки и корзину
+      this.$emit('update-cart', []); // Очищаем корзину
       this.showShipping = false;
       this.$emit('close-cart');
     }
   }
 };
 </script>
-
 <style>
 .cart-modal {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     background: rgba(0, 0, 0, 0.4);
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 10;
+    z-index: 30;
 }
 .cart-content {
     position: relative;
     width: 40%;
-    height: 1080px;
+    height: 100%;
     padding: 40px 50px;
     background: #fff;
     margin-left: auto;
     box-shadow: -4px 0 4px 0 rgba(0, 0, 0, 0.4);
+
 }
 .cart-top {
     display: flex;
@@ -131,12 +114,12 @@ export default {
     gap: 20px;
 }
 .cart-body {
-    height: 740px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 30px;
     overflow-y: auto;
-    margin-top: 50px;
+    margin: 50px 0;
 }
 .cart-item {
     padding: 25px 20px;
@@ -224,5 +207,24 @@ export default {
   text-align: center;
   color: #750000;
   border: 4px solid #750000;
+}
+@media (max-width: 1024px) {
+  .cart-content {
+    width: 100%;
+  }
+  .cart-footer {
+    height: 240px;
+  }
+  .user-page-content-body {
+    width: 100%;
+  }
+  .user-page-item {
+    width: 80%;
+  }
+}
+@media (max-width: 800px) {
+  .user-page-item {
+    width: 100%;
+  }
 }
 </style>

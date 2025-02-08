@@ -1,6 +1,6 @@
 <template>
     <section class="product">
-        <div class="product__content container">
+        <div class="product__content container" >
             <div class="product__content-info">
                 <h2 class="product__info-title title">Все товары</h2>
                 <form class="product__info-form" @submit.prevent="searchProducts">
@@ -20,31 +20,35 @@
                 <ProductsList 
                     v-for="product in filteredProducts" 
                     :key="product.id"
-                    :image="product.image"
-                    :favourite="product.favourite"
-                    :title="product.title"
-                    :text="product.text"
-                    :price="product.price"
-                    @add-to-cart="addToCart(product)"
+                    v-bind="product" 
+                    @add-to-cart="addToCart"
                 />
+
             </div>
-            <Basket :cart="cart" @update-cart="updateCart" />
+            <!-- <Basket 
+                :isCartOpen="isCartOpen"
+                :cart="cart"
+                @update-cart="updateCart"
+                @close-cart="isCartOpen = false"
+            /> -->
         </div>
     </section>
 </template>
+
 <script>
-import ProductsList from './ProductsList.vue'; // Импорт компонента списка продуктов
-import Basket from './Basket.vue'; // Импорт компонента корзины
+import ProductsList from './ProductsList.vue';
+import Basket from './Basket.vue';
 
 export default {
     components: {
-        ProductsList, // Регистрация компонента списка продуктов
-        Basket // Регистрация компонента корзины
+        ProductsList,
+        Basket
     },
     data() {
         return {
-            searchQuery: "", // Строка для поиска товаров
-            products: [ // Список товаров с изображением, названием, описанием и ценой
+            searchQuery: "",
+            isCartOpen: false, // Добавлено состояние корзины
+            products: [
                 { id: 1, image: "/src/img/products-1.png", favourite: "/src/img/favourite-products-1.png", title: "Blacksi", text: "Костюм спортивный", price: 3595 },
                 { id: 2, image: "/src/img/products-2.png", favourite: "/src/img/favourite-products-1.png", title: "Fashion.Love.Story", text: "Платье", price: 3500 },
                 { id: 3, image: "/src/img/products-3.png", favourite: "/src/img/favourite-products-1.png", title: "UNIQLO", text: "Водолазка", price: 2999 },
@@ -52,11 +56,11 @@ export default {
                 { id: 5, image: "/src/img/products-5.png", favourite: "/src/img/favourite-products-1.png", title: "Vittoria Vicci", text: "Пуловер", price: 3595 },
                 { id: 6, image: "/src/img/products-6.png", favourite: "/src/img/favourite-products-1.png", title: "O'stin", text: "Платье", price: 3799 }
             ],
-            cart: [] // Массив товаров, добавленных в корзину
+            cart: []
         };
     },
     computed: {
-        filteredProducts() { // Фильтрация товаров по поисковому запросу
+        filteredProducts() {
             if (!this.searchQuery) {
                 return this.products;
             }
@@ -68,25 +72,35 @@ export default {
         }
     },
     methods: {
-        searchProducts() { // Метод поиска товаров (в текущем виде только логирует запрос)
+        searchProducts() {
             console.log("Поиск: ", this.searchQuery);
         },
-        removeFromCart(productId) { // Удаление товара из корзины
-            const productIndex = this.cart.findIndex(item => item.id === productId);
-            if (productIndex !== -1) {
-                if (this.cart[productIndex].quantity > 1) {
-                    this.cart[productIndex].quantity--; // Уменьшение количества товара
-                } else {
-                    this.cart.splice(productIndex, 1); // Удаление товара из корзины, если его количество 1
-                }
-            }
+        addToCart(product) {
+        const existingIndex = this.cart.findIndex(item => item.id === product.id);
+        if (existingIndex !== -1) {
+            // Создаем новый массив, чтобы Vue отслеживал изменения
+            this.cart = this.cart.map((item, index) =>
+                index === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
+            );
+        } else {
+            this.cart = [...this.cart, { ...product, quantity: 1 }];
+        }
         },
-        updateCart(updatedCart) { // Обновление состояния корзины (например, после изменения количества в компоненте Basket)
+        removeFromCart(productId) {
+            this.cart = this.cart.map(item => 
+                item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
+            ).filter(item => item.quantity > 0);
+        },
+        updateCart(updatedCart) {
             this.cart = updatedCart;
+        },
+        toggleCart() {
+            this.isCartOpen = !this.isCartOpen; // Открыть/закрыть корзину
         }
     }
 };
 </script>
+
 
 
 
