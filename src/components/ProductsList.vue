@@ -12,7 +12,6 @@
                     <p class="product__price-name">ЦЕНА:</p>
                     <span class="product__price-info">{{ price }} ₽</span>
                 </div>
-                <!-- Кнопка добавления в корзину -->
                 <button @click="addToCart" class="product__footer-btn">+</button>
             </div>
         </div>
@@ -22,38 +21,39 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 
-// Принимаем данные о товаре
+// Определяем входные параметры (props) компонента
 const props = defineProps({
-    id: Number, // ID товара
-    image: String,
-    favourite: String,
-    title: String,
-    text: String,
-    price: Number
+    id: Number, // Уникальный идентификатор товара
+    image: String, // URL изображения товара
+    favourite: String, // URL изображения для избранного (если используется)
+    title: String, // Название товара
+    text: String, // Описание товара
+    price: Number // Цена товара
 });
 
-// Определяем событие для передачи в родительский компонент
+// Определяем события, которые компонент может выбрасывать
 const emit = defineEmits(['add-to-cart']);
 
-// Метод для добавления товара в корзину
+// Функция для добавления товара в корзину
 const addToCart = () => {
-    if (!props.id || !props.title || !props.text || !props.price || !props.image) {
-        console.warn('Некорректные данные товара:', props);
-        return;
+    // Проверяем, что все необходимые данные переданы
+    if (!props.id || !props.title || !props.text || props.price == null || !props.image) {
+        console.warn('Некорректные данные товара:', { 
+            id: props.id, 
+            title: props.title, 
+            text: props.text, 
+            price: props.price, 
+            image: props.image 
+        });
+        return; // Прекращаем выполнение, если данные некорректны
     }
 
-    emit('add-to-cart', {
-        id: props.id,
-        title: props.title,
-        text: props.text,
-        price: props.price,
-        image: props.image,
-        quantity: 1
-    });
+    // Вызываем событие 'add-to-cart' и передаём в него объект товара с количеством
+    emit('add-to-cart', { ...props, quantity: 1 });
 
-    console.log(`Товар добавлен в корзину: ${props.title} ${props.text} (ID: ${props.id} ) ${props.price}`);
+    console.log(`Товар добавлен в корзину: ${props.title} (${props.id}) - ${props.price} ₽`);
 };
-
 </script>
+
 
 

@@ -36,7 +36,6 @@
     @close-page="isPageOpen = false" 
     @refresh-orders="orders = []" 
   />
-
 </template>
 
 <script>
@@ -47,42 +46,47 @@ import Products from './Products.vue';
 
 export default {
   components: {
-    Basket,
-    UserPage,
-    ProductsList,
-    Products,
+    Basket, // Компонент корзины
+    UserPage, // Страница пользователя
+    ProductsList, // Список товаров
+    Products // Карточка товара
   },
   data() {
     return {
-      isCartOpen: false,
-      isPageOpen: false,
-      isFavoriteOpen: false,
-      cart: [
-      ],
-      favoriteItems: []
+      isCartOpen: false, // Флаг открытия корзины
+      isPageOpen: false, // Флаг открытия страницы пользователя
+      isFavoriteOpen: false, // Флаг открытия страницы избранного
+      cart: [], // Массив товаров в корзине
+      favoriteItems: [], // Массив избранных товаров
+      orders: [] // ✅ Массив заказов (добавлен)
     };
   },
   computed: {
     totalPrice() {
-      return this.cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+      // Вычисляем общую сумму товаров в корзине
+      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     }
   },
   methods: {
     toggleCart() {
-      this.isCartOpen = !this.isCartOpen;
+      this.isCartOpen = !this.isCartOpen; // Открываем/закрываем корзину
     },
     updateCart(updatedCart) {
-      this.cart = updatedCart;
+      this.cart = updatedCart; // Обновляем корзину при изменении товаров
     },
     togglePage() {
-      this.isPageOpen = !this.isPageOpen;
+      this.isPageOpen = !this.isPageOpen; // Открываем/закрываем страницу пользователя
     },
     updateOrders(newOrders) {
-      this.orders = newOrders;
+      this.orders = newOrders; // Обновляем заказы при их оформлении
     },
+    toggleFavoritePage() {
+      this.isFavoriteOpen = !this.isFavoriteOpen; // Открываем/закрываем страницу избранного
+    }
   }
 };
 </script>
+
 
 
 

@@ -25,12 +25,12 @@
                 />
 
             </div>
-            <!-- <Basket 
-                :isCartOpen="isCartOpen"
+            <Basket 
+                :isCartOpen="isCartOpen" 
                 :cart="cart"
                 @update-cart="updateCart"
-                @close-cart="isCartOpen = false"
-            /> -->
+                @close-cart="toggleCart"
+            />
         </div>
     </section>
 </template>
@@ -41,14 +41,14 @@ import Basket from './Basket.vue';
 
 export default {
     components: {
-        ProductsList,
-        Basket
+        ProductsList, // Компонент списка товаров
+        Basket // Компонент корзины
     },
     data() {
         return {
-            searchQuery: "",
-            isCartOpen: false, // Добавлено состояние корзины
-            products: [
+            searchQuery: "", // Строка поиска
+            isCartOpen: false, // Состояние отображения корзины (открыта/закрыта)
+            products: [ // Список товаров
                 { id: 1, image: "/src/img/products-1.png", favourite: "/src/img/favourite-products-1.png", title: "Blacksi", text: "Костюм спортивный", price: 3595 },
                 { id: 2, image: "/src/img/products-2.png", favourite: "/src/img/favourite-products-1.png", title: "Fashion.Love.Story", text: "Платье", price: 3500 },
                 { id: 3, image: "/src/img/products-3.png", favourite: "/src/img/favourite-products-1.png", title: "UNIQLO", text: "Водолазка", price: 2999 },
@@ -56,49 +56,54 @@ export default {
                 { id: 5, image: "/src/img/products-5.png", favourite: "/src/img/favourite-products-1.png", title: "Vittoria Vicci", text: "Пуловер", price: 3595 },
                 { id: 6, image: "/src/img/products-6.png", favourite: "/src/img/favourite-products-1.png", title: "O'stin", text: "Платье", price: 3799 }
             ],
-            cart: []
+            cart: [] // Корзина товаров
         };
     },
     computed: {
         filteredProducts() {
+            // Фильтруем товары по введённому запросу
             if (!this.searchQuery) {
-                return this.products;
+                return this.products; // Если поисковый запрос пуст, возвращаем весь список
             }
             const query = this.searchQuery.toLowerCase();
             return this.products.filter(product =>
-                product.title.toLowerCase().includes(query) || 
-                product.text.toLowerCase().includes(query)
+                product.title.toLowerCase().includes(query) || // Поиск по названию
+                product.text.toLowerCase().includes(query) // Поиск по описанию
             );
         }
     },
     methods: {
         searchProducts() {
-            console.log("Поиск: ", this.searchQuery);
+            console.log("Поиск: ", this.searchQuery); // Выводим запрос в консоль
         },
         addToCart(product) {
-        const existingIndex = this.cart.findIndex(item => item.id === product.id);
-        if (existingIndex !== -1) {
-            // Создаем новый массив, чтобы Vue отслеживал изменения
-            this.cart = this.cart.map((item, index) =>
-                index === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
-            );
-        } else {
-            this.cart = [...this.cart, { ...product, quantity: 1 }];
-        }
+            // Добавление товара в корзину
+            const existingIndex = this.cart.findIndex(item => item.id === product.id);
+            if (existingIndex !== -1) {
+                // Если товар уже в корзине, увеличиваем его количество
+                this.cart = this.cart.map((item, index) =>
+                    index === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
+                );
+            } else {
+                // Если товара нет в корзине, добавляем его с quantity = 1
+                this.cart = [...this.cart, { ...product, quantity: 1 }];
+            }
         },
         removeFromCart(productId) {
+            // Удаление товара из корзины или уменьшение его количества
             this.cart = this.cart.map(item => 
                 item.id === productId ? { ...item, quantity: item.quantity - 1 } : item
-            ).filter(item => item.quantity > 0);
+            ).filter(item => item.quantity > 0); // Удаляем товар, если quantity стало 0
         },
         updateCart(updatedCart) {
-            this.cart = updatedCart;
+            this.cart = updatedCart; // Обновляем корзину при изменениях
         },
         toggleCart() {
             this.isCartOpen = !this.isCartOpen; // Открыть/закрыть корзину
         }
     }
 };
+
 </script>
 
 

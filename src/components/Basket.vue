@@ -52,42 +52,63 @@
 <script>
 export default {
   props: {
-    isCartOpen: Boolean,
-    cart: Array
+    isCartOpen: Boolean, // Флаг, открыта ли корзина
+    cart: Array // Массив товаров в корзине
   },
   data() {
     return {
-      showShipping: false
+      showShipping: false // Флаг отображения сообщения об успешном заказе
     };
   },
   computed: {
     totalPrice() {
-      return this.cart.reduce((sum, item) => sum + (item.price * item.quantity || 0), 0);
+      // Вычисляем общую стоимость товаров в корзине
+      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
     }
   },
   methods: {
     removeFromCart(id) {
-      const updatedCart = this.cart.map(item => 
-        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-      ).filter(item => item.quantity > 0);
+      // Уменьшаем количество товара или удаляем его, если количество становится 0
+      let updatedCart = this.cart.map(item => {
+        if (item.id === id) {
+          return { ...item, quantity: item.quantity - 1 }; // Уменьшаем количество
+        }
+        return item;
+      }).filter(item => item.quantity > 0); // Убираем товар, если quantity <= 0
 
-      this.$emit('update-cart', updatedCart);
+      this.$emit('cart-modal', updatedCart); // Передаем обновленный массив корзины в родительский компонент
     },
+
     submitOrder() {
-      this.$emit('submit-order', this.cart); // Отправляем заказ в UserPage
-      this.showShipping = true;
+      // Проверяем, есть ли товары в корзине
+      if (this.cart.length === 0) {
+        console.warn('Корзина пуста, заказ невозможен!');
+        return;
+      }
+
+      const orderCopy = JSON.parse(JSON.stringify(this.cart)); // Создаем копию заказа, чтобы избежать мутаций
+
+      this.$emit('submit-order', orderCopy); // Отправляем заказ в родительский компонент
+      this.showShipping = true; // Показываем сообщение о заказе
+
+      // Закрываем сообщение через 3 секунды
       setTimeout(() => {
         this.closeShipping();
       }, 3000);
+      
+      console.log(`✅ Заказ оформлен:`, orderCopy);
     },
+
     closeShipping() {
-      this.$emit('update-cart', []); // Очищаем корзину
-      this.showShipping = false;
-      this.$emit('close-cart');
+      this.$emit('update-cart', []); // Очищаем корзину после оформления заказа
+      this.showShipping = false; // Скрываем сообщение о заказе
+      this.$emit('close-cart'); // Закрываем корзину
     }
   }
 };
 </script>
+
+
 <style>
 .cart-modal {
     width: 100%;
