@@ -1,3 +1,0 @@
-<template>
-    se
-</template>

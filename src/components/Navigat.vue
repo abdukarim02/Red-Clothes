@@ -37,12 +37,6 @@
     @refresh-orders="orders = []" 
   />
 
-  <!-- Компонент избранного -->
-  <FavoritePage
-    v-if="isFavoriteOpen"
-    :favorites="favoriteItems" 
-    @close-favorite="toggleFavoritePage"
-  />
 </template>
 
 <script>
@@ -50,7 +44,6 @@ import Basket from './Basket.vue';
 import UserPage from './UserPage.vue';
 import ProductsList from './ProductsList.vue';
 import Products from './Products.vue';
-import FavoritePage from './FavoritePage.vue';
 
 export default {
   components: {
@@ -58,7 +51,6 @@ export default {
     UserPage,
     ProductsList,
     Products,
-    FavoritePage
   },
   data() {
     return {
@@ -66,8 +58,6 @@ export default {
       isPageOpen: false,
       isFavoriteOpen: false,
       cart: [
-        { id: 1, image: "/src/img/products-1.png", title: "Blacksi", quantity: 2, text: "Костюм спортивный", price: 3595 },
-        { id: 2, image: "/src/img/products-2.png", title: "Blacksi", quantity: 3, text: "Костюм спортивный", price: 3595 }
       ],
       favoriteItems: []
     };
@@ -87,15 +77,9 @@ export default {
     togglePage() {
       this.isPageOpen = !this.isPageOpen;
     },
-    toggleFavoritePage() {
-      this.isFavoriteOpen = !this.isFavoriteOpen;
-    },
     updateOrders(newOrders) {
       this.orders = newOrders;
     },
-    updateFavorites(newFavorites) {
-      this.favoriteItems = newFavorites;
-    }
   }
 };
 </script>

@@ -206,7 +206,8 @@ body {
         cursor: pointer;
 	}
 	&__flex-info {
-        margin: 20px;
+        width: 100%;
+        padding: 20px;
 	}
 	&__info-name {
         @include stylefontz( $font-family, 700, 24px,  $bordo);
@@ -468,6 +469,33 @@ body {
     }
 }
 }
+.favorite {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    position: absolute;
+
+    // .favorite__content
+
+    &__content {
+    }
+
+    // .favorite__content-info
+
+    &__content-info {
+    }
+
+    // .favorite__info-title
+
+    &__info-title {
+    }
+
+    // .favorite__content-body
+
+    &__content-body {
+    }
+}
+
 @media (max-width: 425px) {
     .main__content {
         height: 80vh;
