@@ -41,51 +41,57 @@
 <script>
 import Basket from './Basket.vue';
 import UserPage from './UserPage.vue';
-import ProductsList from './ProductsList.vue';
-import Products from './Products.vue';
 
 export default {
   components: {
-    Basket, // Компонент корзины
-    UserPage, // Страница пользователя
-    ProductsList, // Список товаров
-    Products // Карточка товара
+    Basket, 
+    UserPage
   },
   data() {
     return {
-      isCartOpen: false, // Флаг открытия корзины
-      isPageOpen: false, // Флаг открытия страницы пользователя
-      isFavoriteOpen: false, // Флаг открытия страницы избранного
-      cart: [], // Массив товаров в корзине
-      favoriteItems: [], // Массив избранных товаров
-      orders: [] // ✅ Массив заказов (добавлен)
+      isCartOpen: false,
+      isPageOpen: false,
+      cart: [
+        { id: 1, image: "/src/img/products-1.png", quantity: 1, title: "Blacksi", text: "Костюм спортивный", price: 3595 },
+        { id: 2, image: "/src/img/products-2.png", quantity: 2, title: "Blacksi", text: "Костюм спортивный", price: 4595 },
+        { id: 3, image: "/src/img/products-3.png", quantity: 3, title: "Blacksi", text: "Костюм спортивный", price: 5595 },
+        { id: 4, image: "/src/img/products-4.png", quantity: 1, title: "Blacksi", text: "Костюм спортивный", price: 3595 },
+        { id: 5, image: "/src/img/products-5.png", quantity: 2, title: "Blacksi", text: "Костюм спортивный", price: 4595 },
+        { id: 6, image: "/src/img/products-6.png", quantity: 3, title: "Blacksi", text: "Костюм спортивный", price: 5595 },
+      ],
+      orders: []
     };
   },
   computed: {
     totalPrice() {
-      // Вычисляем общую сумму товаров в корзине
-      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      return this.cart.reduce((sum, item) => sum + item.price * Number(item.quantity), 0);
     }
   },
   methods: {
     toggleCart() {
-      this.isCartOpen = !this.isCartOpen; // Открываем/закрываем корзину
+      this.isCartOpen = !this.isCartOpen;
     },
     updateCart(updatedCart) {
-      this.cart = updatedCart; // Обновляем корзину при изменении товаров
+      this.cart = updatedCart || [];
     },
     togglePage() {
-      this.isPageOpen = !this.isPageOpen; // Открываем/закрываем страницу пользователя
+      this.isPageOpen = !this.isPageOpen;
     },
     updateOrders(newOrders) {
-      this.orders = newOrders; // Обновляем заказы при их оформлении
+      if (Array.isArray(newOrders) && newOrders.length) {
+        this.orders.push(...newOrders);
+        this.cart = [];
+      }
     },
     toggleFavoritePage() {
-      this.isFavoriteOpen = !this.isFavoriteOpen; // Открываем/закрываем страницу избранного
+      console.log("Открытие избранного");
     }
   }
 };
 </script>
+
+
+
 
 
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="product__wrap-flex" :data-id="id">
+    <div class="product__wrap-flex" :data-id="id || ''">
         <div class="product__flex-bg">
             <img :src="image" alt="product-bg" class="product__bg-img">
             <img :src="favourite" alt="favourite" class="product__bg-favourite">
@@ -12,7 +12,13 @@
                     <p class="product__price-name">ЦЕНА:</p>
                     <span class="product__price-info">{{ price }} ₽</span>
                 </div>
-                <button @click="addToCart" class="product__footer-btn">+</button>
+                <button 
+                    @click="addToCart" 
+                    class="product__footer-btn"
+                    :disabled="!id || !title || !text || price == null || !image"
+                >
+                    +
+                </button>
             </div>
         </div>
     </div>
@@ -21,39 +27,37 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 
-// Определяем входные параметры (props) компонента
 const props = defineProps({
-    id: Number, // Уникальный идентификатор товара
-    image: String, // URL изображения товара
-    favourite: String, // URL изображения для избранного (если используется)
-    title: String, // Название товара
-    text: String, // Описание товара
-    price: Number // Цена товара
+    id: Number,
+    image: String,
+    favourite: String,
+    title: String,
+    text: String,
+    price: Number
 });
 
-// Определяем события, которые компонент может выбрасывать
 const emit = defineEmits(['add-to-cart']);
 
-// Функция для добавления товара в корзину
 const addToCart = () => {
-    // Проверяем, что все необходимые данные переданы
     if (!props.id || !props.title || !props.text || props.price == null || !props.image) {
-        console.warn('Некорректные данные товара:', { 
-            id: props.id, 
-            title: props.title, 
-            text: props.text, 
-            price: props.price, 
-            image: props.image 
-        });
-        return; // Прекращаем выполнение, если данные некорректны
+        console.warn('Некорректные данные товара:', props);
+        return;
     }
 
-    // Вызываем событие 'add-to-cart' и передаём в него объект товара с количеством
-    emit('add-to-cart', { ...props, quantity: 1 });
+    emit('add-to-cart', {
+        id: props.id,
+        image: props.image,
+        favourite: props.favourite,
+        title: props.title,
+        text: props.text,
+        price: props.price,
+        quantity: 1
+    });
 
-    console.log(`Товар добавлен в корзину: ${props.title} (${props.id}) - ${props.price} ₽`);
+    console.log(`Товар добавлен: ${props.title} (${props.id}) - ${props.price} ₽`);
 };
 </script>
+
 
 
 

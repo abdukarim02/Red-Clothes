@@ -1,5 +1,5 @@
 <template>
-  <section v-show="isCartOpen" class="cart-modal" @click.self="$emit('close-cart')">
+  <section v-if="isCartOpen" class="cart-modal" @click.self="$emit('close-cart')">
     <div class="cart-content">
       <div class="cart-top">
         <button @click="$emit('close-cart')" class="close-btn">
@@ -13,7 +13,7 @@
 
       <div class="cart-body" v-if="cart.length > 0 && !showShipping">
         <div v-for="item in cart" :key="item.id" class="cart-item">
-          <img :src="item.image" :alt="item.title" class="cart-item-img">
+          <img :src="item.image" :alt="item.title" class="cart-item-img" />
           <div class="cart-item-info">
             <span class="product__info-name">{{ item.title }} ({{ item.quantity }})</span>
             <span class="product__info-text">{{ item.text }}</span>
@@ -23,25 +23,25 @@
         </div>
       </div>
 
-      <div class="cart-sapling" v-if="cart.length === 0 && !showShipping">
+      <div v-else-if="!showShipping" class="cart-sapling">
         <div class="cart-sapling-info">
           <h5 class="cart-sapling-name">Ваша корзина пуста</h5>
-          <img src="@/img/cart-sapling-1.png" alt="" class="cart-sapling-img">
+          <img src="@/img/cart-sapling-1.png" alt="" class="cart-sapling-img" />
           <p class="cart-sapling-text">Добавьте хотя бы один товар, чтобы сделать заказ</p>
           <button class="cart-sapling-btn" @click="$emit('close-cart')">Вернуться</button>
         </div>
       </div>
 
-      <div class="cart-shipping" v-if="showShipping">
+      <div v-if="showShipping" class="cart-shipping">
         <div class="cart-sapling-info">
           <h5 class="cart-sapling-name">Заказ оформлен!</h5>
-          <img src="@/img/cart-sapling-2.png" alt="" class="cart-sapling-img">
+          <img src="@/img/cart-sapling-2.png" alt="" class="cart-sapling-img" />
           <p class="cart-sapling-text">Спасибо за ваш заказ!</p>
           <button class="cart-sapling-btn" @click="closeShipping">Ок</button>
         </div>
       </div>
 
-      <div class="cart-footer" v-if="cart.length > 0 && !showShipping">
+      <div v-if="cart.length > 0 && !showShipping" class="cart-footer">
         <p class="product__info-title title">К оплате: <span>{{ totalPrice }} ₽</span></p>
         <button class="cart-footer-btn" @click="submitOrder">Заказать</button>
       </div>
@@ -52,61 +52,48 @@
 <script>
 export default {
   props: {
-    isCartOpen: Boolean, // Флаг, открыта ли корзина
-    cart: Array // Массив товаров в корзине
+    isCartOpen: Boolean,
+    cart: {
+      type: Array,
+      default: () => [],
+    },
+    totalPrice: Number, // Теперь totalPrice передается из родителя
   },
   data() {
     return {
-      showShipping: false // Флаг отображения сообщения об успешном заказе
+      showShipping: false,
     };
-  },
-  computed: {
-    totalPrice() {
-      // Вычисляем общую стоимость товаров в корзине
-      return this.cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    }
   },
   methods: {
     removeFromCart(id) {
-      // Уменьшаем количество товара или удаляем его, если количество становится 0
-      let updatedCart = this.cart.map(item => {
-        if (item.id === id) {
-          return { ...item, quantity: item.quantity - 1 }; // Уменьшаем количество
-        }
-        return item;
-      }).filter(item => item.quantity > 0); // Убираем товар, если quantity <= 0
+      const updatedCart = this.cart
+        .map(item => item.id === id ? { ...item, quantity: item.quantity - 1 } : item)
+        .filter(item => item.quantity > 0); // Фильтруем товары с нулевым количеством
 
-      this.$emit('cart-modal', updatedCart); // Передаем обновленный массив корзины в родительский компонент
+      this.$emit('update-cart', updatedCart);
     },
-
     submitOrder() {
-      // Проверяем, есть ли товары в корзине
-      if (this.cart.length === 0) {
-        console.warn('Корзина пуста, заказ невозможен!');
-        return;
-      }
+      if (this.cart.length === 0) return;
 
-      const orderCopy = JSON.parse(JSON.stringify(this.cart)); // Создаем копию заказа, чтобы избежать мутаций
+      this.showShipping = true;
+      this.$emit('submit-order', this.cart);
 
-      this.$emit('submit-order', orderCopy); // Отправляем заказ в родительский компонент
-      this.showShipping = true; // Показываем сообщение о заказе
+      // Очищаем корзину после заказа
+      this.$emit('update-cart', []);
 
-      // Закрываем сообщение через 3 секунды
-      setTimeout(() => {
-        this.closeShipping();
-      }, 3000);
-      
-      console.log(`✅ Заказ оформлен:`, orderCopy);
+      setTimeout(this.closeShipping, 3000);
     },
-
     closeShipping() {
-      this.$emit('update-cart', []); // Очищаем корзину после оформления заказа
-      this.showShipping = false; // Скрываем сообщение о заказе
-      this.$emit('close-cart'); // Закрываем корзину
-    }
-  }
+      this.showShipping = false;
+      this.$nextTick(() => {
+        this.$emit('close-cart');
+      });
+    },
+  },
 };
 </script>
+
+
 
 
 <style>
